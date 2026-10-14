@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="MLE-World predicts machine learning execution feedback. Explore recorded predictions by confidence and compare final verified solutions across search policies." name="description"/>
+<meta content="#6f42c1" name="theme-color"/>
+<title>MLE-World: Predicting Machine Learning Experiment Outcomes</title>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101c35'/%3E%3Cpath d='M13 20l12 12-12 12M32 44h18' fill='none' stroke='%239fc3ff' stroke-width='6'/%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
+<link href="styles.css" rel="stylesheet"/>
+<link href="confidence-evidence.css" rel="stylesheet"/>
+<link href="walkthrough.css" rel="stylesheet"/>
+<link href="animation-scenes.css" rel="stylesheet"/>
+<link href="solution-stories.css" rel="stylesheet"/>
+<script src="app.mjs" type="module"></script>
+<script src="walkthrough.mjs" type="module"></script>
+<link href="research-page.css" rel="stylesheet"/>
+<script src="research-page.mjs" type="module"></script></head>
+<body class="research-page">
+<a class="skip-link" href="#walkthrough">Skip to highlights</a>
+<nav aria-label="Page sections" class="floating-toc"><a class="toc-brand" href="#top">MLE-World</a><span class="toc-label">ON THIS PAGE</span><a href="#walkthrough">Highlights</a><a href="#abstract">Abstract</a><a href="#contributions">Contributions</a><a href="#method">Method</a><a href="#world-model-performance">World model performance</a><a href="#confidence">Prediction fidelity</a><a href="#policies">Final agent performance</a><a href="#solutions">Solution examples</a><a href="#resources">Resources</a></nav>
+<details class="mobile-toc"><summary><a class="mobile-brand" href="#top">MLE-World</a><span>On this page <span aria-hidden="true">⌄</span></span></summary><nav aria-label="Mobile page sections"><a href="#walkthrough">Highlights</a><a href="#abstract">Abstract</a><a href="#contributions">Contributions</a><a href="#method">Method</a><a href="#world-model-performance">World model performance</a><a href="#confidence">Prediction fidelity</a><a href="#policies">Final agent performance</a><a href="#solutions">Solution examples</a><a href="#resources">Resources</a></nav></details>
+<main id="top">
+<section aria-labelledby="paper-title" class="publication-hero wrap">
+<p class="publication-status">A learned world model for ML research</p>
+<h1 id="paper-title"><span class="publication-name">MLE-World</span><span class="publication-subtitle">Predicting Machine Learning Experiment Outcomes<br class="desktop-break"/> with a Learned World Model</span></h1>
+<div aria-label="Authors" class="publication-authors">
+<span class="author-block">Brian Ko<sup>1</sup></span>
+<span class="author-block">Han Wang<sup>2</sup></span>
+<span class="author-block">Hejia Geng<sup>3</sup></span>
+<span class="author-block">Li Erran Li<sup>4</sup></span>
+<span class="author-block">Sherry Yang<sup>5</sup></span>
+</div>
+<div aria-label="Author affiliations" class="publication-affiliations">
+<div class="affiliation-row"><span><sup>1</sup>University of Washington</span><span><sup>2</sup>University of Illinois at Urbana-Champaign</span></div>
+<div class="affiliation-row"><span><sup>3</sup>AItonomy Foundation</span><span><sup>4</sup>Amazon</span><span><sup>5</sup>New York University</span></div>
+</div>
+<div aria-label="Research resources" class="publication-links">
+<a class="resource-button resource-primary" href="assets/paper-draft.pdf" rel="noopener" target="_blank"><svg aria-hidden="true" class="resource-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h6"></path></svg>Paper</a>
+<a class="resource-button" href="https://github.com/ko120/MLE-world" rel="noopener" target="_blank"><svg aria-hidden="true" class="resource-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6m-3-15-2 18"></path></svg>Code</a>
+<button aria-label="Data (coming soon)" class="resource-button resource-unavailable" disabled="" type="button"><svg aria-hidden="true" class="resource-icon" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" viewbox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg><span>Data<small>Coming soon</small></span></button>
+</div>
+<div class="publication-explore"><a href="#confidence">Prediction demo <span aria-hidden="true">↗</span></a><a href="#solutions">Solution examples <span aria-hidden="true">↗</span></a></div>
+<p class="publication-tagline">See the outcome. Before the run.</p>
+</section>
+<section class="wrap section-wrap" id="walkthrough">
+<div class="section-heading"><div><h2>Highlights</h2><p>Sample candidate programs, predict each outcome, then select, gate, and return feedback.</p></div></div>
+<article aria-labelledby="loop-title" class="animation-card" id="loop-animation">
+<div class="animation-heading"><div><p class="eyebrow">FIGURE 1(B)</p><h3 id="loop-title">MLE-World enables test-time scaling</h3></div><a href="assets/figure-1b.pdf" rel="noopener" target="_blank">View paper figure ↗</a></div>
+<div class="animation-options"><label for="loop-scenario">Confidence route</label><select id="loop-scenario"><option value="auto">Auto · alternate high and low confidence</option><option value="high">High confidence · skip execution</option><option value="low">Low confidence · run real code</option></select></div>
+<div aria-describedby="loop-step-description" aria-label="Figure 1b animated candidate prediction and feedback loop" class="animation-canvas" id="loop-diagram" tabindex="0"></div>
+<div class="verification-ribbon" id="loop-verification"><span aria-hidden="true">✓</span><div><strong>Final submission: real run</strong><span>Select the final program by its best real validation score.</span></div></div>
+<div class="animation-story"><div class="playback-controls"><button class="button" id="loop-play" type="button">Play</button><button class="button secondary" id="loop-next" type="button">Next step</button><button class="button secondary" id="loop-reset" type="button">Restart</button></div><div aria-atomic="true" aria-live="polite" class="step-caption"><span class="eyebrow" id="loop-progress"></span><h4 id="loop-step-title"></h4><p id="loop-step-description"></p></div></div>
+<div aria-label="Figure 1b steps" class="animation-steps" id="loop-steps" role="group"></div>
+<p class="animation-note">Schematic from Figure 1(b): every candidate gets a predicted report before selection or combination. The returned program carries its MLE-World confidence into the gate; newly combined code receives a new prediction. Scores and the 0.80 threshold are illustrative. The full method also verifies new best predictions and uses outcome-specific thresholds.</p>
+</article>
+</section><section aria-labelledby="abstract-title" class="wrap section-wrap prose-section" id="abstract">
+<h2 id="abstract-title">Abstract</h2>
+<p>Machine learning research agents repeatedly write, run, and revise programs. Each real execution can require training and evaluation before the agent receives useful feedback. <strong>MLE-World predicts that execution feedback directly from code and task context</strong>: terminal output, an exception class, and a validation metric.</p>
+<p>The learned predictor is a fine-tuned Qwen3.5-4B model. Research agents use its reports to screen, compare, or improve candidate programs, while a confidence gate determines when to request real execution. Final submissions are verified through real execution. The experiments below separately examine <strong>prediction fidelity, search quality, and real-execution cost</strong>.</p>
+</section><section aria-labelledby="contributions-title" class="wrap section-wrap contributions-section" id="contributions">
+<h2 id="contributions-title">Two roles for a learned world model</h2>
+<div class="contribution-grid"><article class="contribution-card"><span class="contribution-number">01 / PREDICT</span><h3>Learn execution feedback</h3><p>Turn candidate code, task data, environment, and runtime budget into a structured report. Compare those predictions with the outcomes of 1,700 held-out programs.</p><a href="#confidence">Explore prediction fidelity <span aria-hidden="true">→</span></a></article><article class="contribution-card contribution-search"><span class="contribution-number">02 / SEARCH</span><h3>Guide the next experiment</h3><p>Use predicted reports across five candidate-search policies. Apply confidence gating after candidate selection, and evaluate final quality and real-execution cost separately.</p><a href="#policies">Compare search results <span aria-hidden="true">→</span></a></article></div>
+</section><section aria-labelledby="method-title" class="wrap section-wrap method-overview" id="method">
+<div class="section-heading"><div><h2 id="method-title">How MLE-World guides search</h2><p>Predict a report for each candidate, select or combine programs, then decide when real execution is needed.</p></div></div>
+<div aria-label="Method views" class="research-tabs" data-research-tabs="" role="tablist"><button aria-controls="method-search" aria-selected="true" id="method-tab-search" role="tab" tabindex="0" type="button">Search policies</button><button aria-controls="method-prediction" aria-selected="false" id="method-tab-prediction" role="tab" tabindex="-1" type="button">Execution prediction</button><button aria-controls="method-gate" aria-selected="false" id="method-tab-gate" role="tab" tabindex="-1" type="button">Confidence gate</button></div>
+<div aria-labelledby="method-tab-search" class="method-panel" id="method-search" role="tabpanel" tabindex="0"><figure aria-labelledby="policy-figure-title" class="paper-figure" id="policy-figure">
+<div class="animation-heading"><div><p class="eyebrow">FIGURE 2</p><h3 id="policy-figure-title">Five policies. One returned program.</h3></div><a href="assets/figure-2.pdf" rel="noopener" target="_blank">Open full size</a></div>
+<a aria-label="Open Figure 2 PDF for zooming" class="paper-figure-image" href="assets/figure-2.pdf" rel="noopener" target="_blank"><img alt="Figure 2: Best-of-N, UCB, Sequential, Fusion, and Pairwise search. Fusion shows Reason then Write inside one LLM agent block: the agent reasons over candidate code and predicted reports to write the final program. Pairwise compares candidate code and predicted reports through three explicitly labeled LLM judge calls, then returns the tournament winner." decoding="async" height="900" loading="lazy" src="assets/figure-2.svg" width="1200"/></a>
+<figcaption><strong>Five search policies using MLE-World predictions.</strong> Each policy returns one program to the execution and confidence-gating loop. In Fusion, the agent reasons over candidate code and predicted reports, then writes the final program. Pairwise uses an LLM judge to compare code and predicted reports. Four usable candidates are shown; rankings and winners are illustrative.</figcaption>
+</figure></div>
+<div aria-labelledby="method-tab-prediction" class="method-panel method-explanation" hidden="" id="method-prediction" role="tabpanel" tabindex="0"><h3>From a candidate program to an execution report</h3><p>MLE-World is fine-tuned on agent trajectories pairing candidate programs with observed execution reports. It predicts one candidate's execution from its code and execution context.</p><div class="prediction-schema"><div><span class="schema-label">MODEL INPUT</span><h4>Code + execution context</h4><ul><li>Candidate program</li><li>Task and data description</li><li>Environment and runtime budget</li></ul></div><span aria-hidden="true" class="schema-arrow">→</span><div><span class="schema-label">PREDICTED REPORT</span><h4>What the program would return</h4><ul><li>Terminal output</li><li>Exception class</li><li>Validation metric</li></ul></div></div><p class="method-footnote">The model also supplies an outcome-class confidence score. The fidelity evaluation below compares saved predictions with real execution.</p></div>
+<div aria-labelledby="method-tab-gate" class="method-panel method-explanation" hidden="" id="method-gate" role="tabpanel" tabindex="0"><h3>Allocate real execution after candidate selection</h3><p>The search policy returns a program. The confidence gate then decides whether its predicted report can supply feedback or whether the program needs to run.</p><ol class="gate-explanation"><li><strong>Check the selected candidate's report.</strong> Reuse an existing prediction; obtain a new one for newly synthesized code.</li><li><strong>Apply the outcome-specific threshold.</strong> Low or missing confidence requests real execution. Success and failure use separate thresholds; predicted timeouts are skipped.</li><li><strong>Verify improvements and final submissions.</strong> A new best predicted score triggers a real run. Final selection uses real validation scores.</li></ol><p class="method-footnote">Confidence is an outcome-class score, not calibrated accuracy. Candidate search and confidence-gated execution allocation are distinct parts of the method.</p><a class="text-link" href="#walkthrough">Watch the feedback loop <span aria-hidden="true">↑</span></a></div>
+</section>
+<section aria-labelledby="world-model-title" class="wrap section-wrap" id="world-model-performance">
+<div class="section-heading"><h2 id="world-model-title">World model performance</h2><p>Prediction accuracy across four output fields, and the GPU time needed to predict execution outcomes.</p><span class="dataset-badge">1,700 held-out programs · 17 tasks</span></div>
+<div class="world-performance-grid">
+<figure aria-labelledby="table-1-title" class="fidelity-table-card">
+<div class="paper-asset-heading"><div><span class="eyebrow">TABLE 1</span><h3 id="table-1-title">Accuracy across prediction fields</h3></div><a href="assets/paper-draft.pdf#page=7" rel="noopener" target="_blank">In the paper ↗</a></div>
+<div aria-label="Table 1 prediction accuracy; scroll horizontally to see all fields" class="table-scroll fidelity-table-scroll" role="region" tabindex="0"><table aria-describedby="table-1-caption" id="fidelity-table"><caption class="sr-only">Prediction accuracy in percent, with standard errors.</caption><thead><tr><th scope="col">Model / baseline</th><th scope="col">Terminal<br/>output</th><th scope="col">Exception<br/>class</th><th scope="col">Crash<br/>class</th><th scope="col">Validation<br/>metric</th></tr></thead><tbody><tr class="fidelity-group"><th colspan="5" scope="rowgroup">Prompted models</th></tr><tr data-model="DeepSeek"><th scope="row">DeepSeek</th><td>41.1<span class="table-se"> ± 1.1</span></td><td>57.2<span class="table-se"> ± 1.2</span></td><td>48.2<span class="table-se"> ± 1.5</span></td><td>18.6<span class="table-se"> ± 1.7</span></td></tr><tr data-model="Coder"><th scope="row">Coder</th><td>17.8<span class="table-se"> ± 0.9</span></td><td>27.5<span class="table-se"> ± 1.1</span></td><td>13.2<span class="table-se"> ± 1.0</span></td><td>16.3<span class="table-se"> ± 1.7</span></td></tr><tr class="fidelity-group"><th colspan="5" scope="rowgroup">Corpus, no model</th></tr><tr data-model="Task majority"><th scope="row">Task majority</th><td>—</td><td>34.2<span class="table-se"> ± 1.2</span></td><td>—</td><td>55.2<span class="table-se"> ± 2.3</span></td></tr><tr data-model="Nearest program"><th scope="row">Nearest program</th><td>28.0<span class="table-se"> ± 1.1</span></td><td>41.1<span class="table-se"> ± 1.2</span></td><td>14.0<span class="table-se"> ± 1.0</span></td><td>55.6<span class="table-se"> ± 2.2</span></td></tr><tr data-model="Parent record"><th scope="row">Parent record</th><td>22.3<span class="table-se"> ± 1.0</span></td><td>34.2<span class="table-se"> ± 1.2</span></td><td>6.7<span class="table-se"> ± 0.7</span></td><td>48.8<span class="table-se"> ± 2.3</span></td></tr><tr class="fidelity-ours" data-model="MLE-World"><th scope="row">MLE-World</th><td>77.9<span class="table-se"> ± 1.0</span></td><td>86.4<span class="table-se"> ± 0.8</span></td><td>76.4<span class="table-se"> ± 1.3</span></td><td>78.1<span class="table-se"> ± 1.9</span></td></tr></tbody></table></div>
+<p class="table-scroll-hint">Scroll to compare all four prediction fields.</p>
+<figcaption id="table-1-caption">Accuracy (%); ± SE from 2,000 program bootstrap resamples. Exception class uses exact match; terminal output and crash class use judged match; validation metric is within 5% relative error. DeepSeek: DeepSeek-V4-Flash-0731. Coder: Qwen3-Coder-Next.</figcaption>
+</figure>
+<figure aria-labelledby="figure-3-title" class="fidelity-cost-card">
+<div class="paper-asset-heading"><div><span class="eyebrow">FIGURE 3</span><h3 id="figure-3-title">Accurate prediction at low inference cost</h3></div><a href="assets/figure-3.pdf" rel="noopener" target="_blank">Full size ↗</a></div>
+<a aria-label="Open Figure 3 PDF" class="paper-figure-image" href="assets/figure-3.pdf" rel="noopener" target="_blank"><img alt="Figure 3: terminal-output accuracy versus GPU generation time on a logarithmic scale. MLE-World: 77.9%, 2.7 GPU-minutes; Coder: 17.8%, 36.5 GPU-minutes; DeepSeek: 41.1%, 2,889 GPU-minutes." decoding="async" height="590" loading="lazy" src="assets/figure-3.svg" width="730"/></a>
+<figcaption>Terminal-output accuracy versus GPU time (wall clock × GPUs; log scale). Bars: ± SE. Ratios use generation time for all models.</figcaption>
+</figure>
+</div>
+</section><section class="section-wrap shade" id="confidence">
+<div class="wrap">
+<div class="section-heading"><div><h2>How reliable are the predictions?</h2><p>Compare measured prediction fidelity with individual examples of what the model predicts and what actually happens.</p></div><span class="dataset-badge">1,700 held-out programs · 17 tasks</span></div>
+<div class="error-banner" hidden="" id="load-error" role="alert"></div>
+<div class="loading" id="loading" role="status">Loading the recorded evaluation…</div>
+<div hidden="" id="explorer">
+<div class="evidence-trend">
+<div class="accuracy-panel">
+<div class="trend-heading"><div><p class="eyebrow">THE FULL EVALUATION</p><h3 id="trend-title">Terminal-output agreement</h3></div><div class="trend-lift"><div><span>Lowest confidence</span><strong id="trend-low">38.7%</strong></div><span aria-label="to" class="trend-connector">→</span><div><span>Highest confidence</span><strong id="trend-high">97.0%</strong></div></div></div>
+<div aria-label="Agreement measure" class="metric-tabs" role="group"><button aria-pressed="true" data-metric="terminal" type="button">Terminal output</button><button aria-pressed="false" data-metric="exception" type="button">Exception class</button><button aria-pressed="false" data-metric="metric" type="button">Validation metric</button></div>
+<div aria-label="Observed agreement across five confidence quantiles" class="chart" id="confidence-chart"></div>
+<p class="chart-note small">340 programs in every confidence group. Rates use all eligible references, including predictions that disagree with execution.</p>
+<p class="small" id="metric-description"></p>
+</div>
+</div>
+<div class="contrast-heading"><div><p class="eyebrow">TWO ILLUSTRATIVE CASES</p><h3>Read the prediction. Check the outcome.</h3></div><p>Key outcome lines from each prediction and its real execution.</p></div>
+<div aria-label="Low and high confidence examples" class="confidence-comparison" id="confidence-comparison"></div>
+<p class="comparison-note">These selected cases illustrate the contrast. The rates above summarize all 1,700 programs; confidence ranks saved predictions and does not guarantee a match.</p>
+<details class="prediction-browser research-disclosure" id="prediction-browser"><summary><span>Explore more predictions<small>10 recorded examples · confidence groups · complete logs and code</small></span><span aria-hidden="true" class="disclosure-symbol">+</span></summary><div class="browser-body"><div class="browse-heading"><p class="eyebrow">BROWSE RECORDED EXAMPLES</p><h3>Explore predictions by confidence.</h3><p>Choose a group to read two saved predictions and their actual outcomes below.</p></div>
+<div class="explorer-dashboard">
+<div class="confidence-control">
+<div class="control-top"><label for="confidence-slider">Example confidence group</label><output for="confidence-slider" id="quantile-display">Q4 · High</output></div>
+<input aria-controls="quantile-summary example-buttons case-content" aria-describedby="slider-description" id="confidence-slider" max="5" min="1" step="1" type="range" value="4"/>
+<div aria-label="Example confidence group" class="quantile-steps" role="group"><button aria-label="Q1, lowest confidence" data-quantile="1" type="button">Q1</button><button aria-label="Q2, low confidence" data-quantile="2" type="button">Q2</button><button aria-label="Q3, middle confidence" data-quantile="3" type="button">Q3</button><button aria-label="Q4, high confidence" data-quantile="4" type="button">Q4</button><button aria-label="Q5, highest confidence" data-quantile="5" type="button">Q5</button></div>
+<div class="slider-scale"><span>Lowest confidence</span><span>Highest confidence</span></div>
+<p class="small" id="slider-description">Five groups of 340 programs, ranked by model confidence.</p>
+<p class="quantile-rank" id="quantile-rank"></p>
+<details class="score-range"><summary>Raw confidence range</summary><code id="quantile-range"></code></details>
+</div>
+<div class="quantile-result" id="quantile-summary"><div class="stat-row"><div class="primary-stat"><span id="accuracy-label">Observed terminal agreement</span><strong id="accuracy-value">—</strong><small id="accuracy-denominator"></small></div><div><span>Programs in quantile</span><strong id="quantile-count">—</strong><small id="quantile-share"></small></div><div><span>Numeric references</span><strong id="numeric-count">—</strong><small>within this quantile</small></div></div><p class="small">The selected examples below explain individual matches and misses. This rate uses the full group.</p></div>
+</div>
+<div class="case-toolbar"><div><p class="eyebrow">SELECTED LONG-OUTPUT EXAMPLES</p><h3 id="case-title">Recorded program</h3></div><div class="case-navigation"><button aria-label="Previous selected example" class="icon-button" id="previous-case" type="button">‹</button><span id="case-position"></span><button aria-label="Next selected example" class="icon-button" id="next-case" type="button">›</button></div></div>
+<p class="small" id="example-summary"></p>
+<div aria-label="Selected examples in this quantile" class="example-buttons" id="example-buttons" role="group"></div>
+<p class="case-caption" id="case-caption"></p>
+<div class="case-picker"><span class="tag" id="case-task"></span><span class="tag" id="case-stage"></span><span class="tag accent-tag" id="case-confidence-rank" title="Percentile rank of the recorded confidence among all 1,700 held-out programs; higher means more confident."></span><span class="tag" id="case-confidence"></span></div>
+<div id="case-content">
+<div class="verdict-strip" id="case-verdicts"></div>
+<div aria-label="Selected prediction and execution excerpts" class="comparison-grid case-excerpts" id="case-excerpts"></div>
+<details class="full-records" id="full-case-logs">
+<summary id="case-full-summary">View complete recorded outputs</summary>
+<div class="log-toolbar"><span class="small">Unedited recorded outputs</span><div><button class="button small-button" id="logs-start" type="button">Beginning</button><button class="button small-button" id="logs-end" type="button">Final lines</button><button aria-controls="terminal-comparison" aria-expanded="false" class="button small-button" id="expand-logs" type="button">Expand logs</button></div></div>
+<div class="comparison-grid terminal-comparison" id="terminal-comparison"><article class="output-panel"><div class="panel-heading"><h4>World-model prediction</h4><span id="predicted-length"></span></div><pre aria-label="Predicted terminal output" id="predicted-output" tabindex="0"></pre></article><article class="output-panel actual-panel"><div class="panel-heading"><h4>Actual execution</h4><span id="actual-length"></span></div><pre aria-label="Actual terminal output" id="actual-output" tabindex="0"></pre></article></div>
+</details>
+<details class="code-details"><summary>Inspect candidate code and input context <span id="case-code-count"></span></summary><div class="detail-actions"><button class="button small-button" id="download-case" type="button">Download candidate code</button><span class="small" id="case-identity"></span></div><pre aria-label="Candidate Python code" id="candidate-code" tabindex="0"></pre><details class="context-details"><summary>Task data and execution environment</summary><pre id="candidate-context" tabindex="0"></pre></details></details>
+</div>
+<p class="section-note">Curated examples: Q1–Q2 show incorrect predictions; Q3 shows a lower-confidence miss and a higher-confidence match; Q4–Q5 show correct predictions. Correctness follows all three terminal judges and can include correctly predicted program failures. Confidence percentiles rank the original scores across all 1,700 programs. Group accuracies use every program in each quantile. Changing levels switches saved examples.</p>
+</div></details></div>
+</div>
+</section>
+<section aria-labelledby="figure-1c-title" class="wrap section-wrap" id="policies">
+<figure class="paper-results-figure" id="figure-1c">
+<div class="paper-asset-heading"><div><p class="eyebrow">FINAL RESULTS · FIGURE 1(C)</p><h2 id="figure-1c-title">Final agent performance</h2><p class="results-lead">Final solution quality versus real execution time across five MLE-World search policies.</p></div><a href="assets/figure-1c.pdf" rel="noopener" target="_blank">Open full size ↗</a></div>
+<div aria-label="Final agent performance chart" class="results-chart-scroll" role="region" tabindex="0"><a aria-label="Open Figure 1c PDF" class="paper-figure-image" href="assets/figure-1c.pdf" rel="noopener" target="_blank"><img alt="Figure 1c: Final quality and real execution. Five MLE-World search policies are compared with Base AIDE. Open markers are ungated and filled markers use confidence gating; arrows show 24–46% less real execution, with higher mean percentile for four of five policies." decoding="async" height="288" loading="lazy" src="assets/figure-1c.svg" width="1094"/></a></div>
+<p class="results-scroll-hint">Scroll to see the full chart, or open it full size.</p>
+<figcaption><strong>Final quality and real execution.</strong> Mean leaderboard percentile of final solutions selected by the best real validation score. Each setting covers 17 tasks × three seeds (51 trials), with an 8-hour budget per trial. The x-axis is mean elapsed time in real execution and cleanup per trial, counting overlapping activity once and excluding inference. Open → filled markers show the change from ungated search to confidence gating.</figcaption>
+</figure></section>
+<section class="section-wrap shade" id="solutions"><div class="wrap">
+<div class="section-heading"><div><h2>Same task. Different solutions.</h2><p>Compare Base AIDE and five search policies on the same task. Inspect the strategies, saved programs, and independently graded outcomes.</p></div><span class="dataset-badge">2 tasks · all 6 policies</span></div>
+<div aria-label="Choose a solution example" class="solution-examples" id="solution-examples" role="group"></div>
+<div aria-labelledby="story-question" id="solution-story">
+<div class="story-heading"><p class="story-context" id="story-context"></p><h3 id="story-question"></h3><p id="story-description"></p></div>
+<p class="story-score-note">Higher percentile is better. Each score belongs to the saved program shown below, for run seed 34; it is not an average across seeds. Base AIDE uses the historical reference run.</p>
+<div aria-busy="true" class="solution-story-cards" id="solution-story-cards"><p class="loading">Loading selected programs…</p></div>
+<div class="story-takeaway"><strong>What changes</strong><p id="story-takeaway"></p></div>
+</div>
+<p class="story-selection-note">These examples were selected for different solution strategies and higher UCB than BoN percentiles in the displayed runs. Every task includes all six policies with the same run seed. TTS runs are ungated; see the <a href="#policies">aggregate results above</a> for the overall comparison.</p>
+<details class="solution-archive" id="solution-archive"><summary>Explore other saved programs</summary>
+<p class="small">For a closer look, choose any recorded task, seed, and pair of policies.</p>
+<div class="solution-controls"><div><label for="solution-task">Task</label><select id="solution-task"></select></div><div><label for="solution-setting">Experiment setting</label><select id="solution-setting"><option value="confidence">Confidence gate</option><option value="ungated">Ungated</option></select></div><div><label for="solution-seed">Seed</label><select id="solution-seed"><option value="34">34</option><option value="35">35</option><option value="36">36</option></select></div></div>
+<div class="solution-compare-label"><h3>Compare two final programs</h3><p class="small">Selection used real validation scores. Private-test grades are shown only for evaluation.</p></div>
+<div class="comparison-grid solutions-grid"><article class="solution-panel"><label for="left-policy">Left policy</label><select id="left-policy"></select><div id="left-solution"></div></article><article class="solution-panel"><label for="right-policy">Right policy</label><select id="right-policy"></select><div id="right-solution"></div></article></div>
+<p class="section-note">Base AIDE is the same historical reference in both views. An unavailable or invalid final submission stays visible. Library labels are extracted from imports in the saved program.</p>
+</details>
+</div></section>
+<section aria-labelledby="resources-title" class="wrap section-wrap resources-section" id="resources"><h2 id="resources-title">Paper &amp; resources</h2><p>Read the paper, inspect the recorded evidence, and explore the programs behind the results.</p><div class="publication-links"><a class="resource-button resource-primary" href="assets/paper-draft.pdf" rel="noopener" target="_blank">Read the paper <span aria-hidden="true">↗</span></a><a class="resource-button" download="" href="data/provenance.json">Download data provenance <span aria-hidden="true">↓</span></a><a class="resource-button" href="#solution-archive">Browse saved programs <span aria-hidden="true">→</span></a></div></section></main>
+<footer class="wrap footer"><div><a class="brand" href="#top"><span aria-hidden="true" class="brand-mark">&gt;_</span>MLE-World</a><p>Recorded predictions. Verified final solutions.</p></div><p>Page adapted from the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" rel="noopener" target="_blank">Academic Project Page Template</a> and <a href="https://nerfies.github.io" rel="noopener" target="_blank">Nerfies</a>.<br/>Page layout: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>.</p></footer>
+<div aria-live="polite" class="sr-only" id="announcement"></div>
+<noscript><p class="wrap error-banner">Enable JavaScript to use the confidence explorer and policy comparisons. The paper draft remains available above.</p></noscript>
+</body>
+</html>

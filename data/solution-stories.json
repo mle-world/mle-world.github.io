@@ -1,0 +1,292 @@
+{
+  "studies": [
+    {
+      "task": "tabular-playground-series-dec-2021",
+      "label": "Forest cover classification",
+      "kind": "Tabular",
+      "question": "One boosted model, or a forest ensemble?",
+      "description": "Predict forest-cover categories from synthetic tabular measurements. Compare the models, tree sizes, training samples, and stopping rules chosen by the six policies.",
+      "takeaway": "UCB’s five-forest vote reaches a higher test percentile than BoN’s single boosted model in this run. The other programs vary tree size, training-data use, and boosting rounds.",
+      "metric": "Test accuracy",
+      "metricDirection": "higher",
+      "solutions": [
+        {
+          "policy": "base",
+          "title": "Boost trees with early stopping",
+          "description": "Trains LightGBM for up to 200 boosting rounds, with a depth limit of eight. Validation loss determines the prediction checkpoint.",
+          "steps": [
+            "Use 80% of training rows",
+            "Train up to 200 boosting rounds",
+            "Use the best validation iteration"
+          ],
+          "codeHash": "ac40ec1c509da52ee58dd2b4d987266d93a9be1e437fab18c98508c5d7cfd424",
+          "evidenceLines": [
+            39,
+            54,
+            71,
+            74,
+            75,
+            77,
+            91,
+            92
+          ],
+          "trialId": "base-reference-tabular-playground-series-dec-2021-34"
+        },
+        {
+          "policy": "bon_metric_argmax",
+          "title": "Train 100 boosting rounds",
+          "description": "Fits one LightGBM classifier with 100 boosting rounds, up to 31 leaves per tree, and a depth limit of ten.",
+          "steps": [
+            "Use 80% of training rows",
+            "Fit 100 boosting rounds",
+            "Predict forest-cover classes"
+          ],
+          "codeHash": "62ff2ecfec194e7df1bbe61f034f6e1c21cef8b31a64e7dbc6f62f55ff0f9b13",
+          "evidenceLines": [
+            43,
+            50,
+            51,
+            52,
+            53,
+            54,
+            67,
+            78
+          ],
+          "trialId": "bon_metric_argmax-ungated-tabular-playground-series-dec-2021-34"
+        },
+        {
+          "policy": "debug_pclean",
+          "title": "Let five random forests vote",
+          "description": "Fits five random forests with 300 trees each and different random seeds, then chooses the majority class prediction for each row.",
+          "steps": [
+            "Use 90% of training rows",
+            "Fit five 300-tree forests",
+            "Choose the majority class"
+          ],
+          "codeHash": "33a0c9d8239ce766793ce0ad5b8dec1ca43a9f8e90590abd9a68233c62be844a",
+          "evidenceLines": [
+            60,
+            67,
+            68,
+            69,
+            73,
+            77,
+            107,
+            108
+          ],
+          "trialId": "debug_pclean-ungated-tabular-playground-series-dec-2021-34"
+        },
+        {
+          "policy": "seq",
+          "title": "Allow larger boosted trees",
+          "description": "Fits 150 LightGBM boosting rounds on 90% of the training rows, allowing up to 50 leaves per tree and a depth limit of 25.",
+          "steps": [
+            "Use 90% of training rows",
+            "Allow up to 50 leaves per tree",
+            "Fit 150 boosting rounds"
+          ],
+          "codeHash": "a9e2ff9a4329cbac4034354d3544568a76ebf1f2e0dce71cd40956e55d7794d6",
+          "evidenceLines": [
+            34,
+            41,
+            42,
+            43,
+            44,
+            46,
+            53,
+            61
+          ],
+          "trialId": "seq-ungated-tabular-playground-series-dec-2021-34"
+        },
+        {
+          "policy": "pairwise",
+          "title": "Train on a smaller sample",
+          "description": "Samples 500,000 rows, holds out 20%, and trains 100 LightGBM boosting rounds with shallow trees and balanced class weights.",
+          "steps": [
+            "Sample 500,000 rows",
+            "Set balanced class weights",
+            "Fit 100 boosting rounds"
+          ],
+          "note": "After the holdout split, the model fits 400,000 rows.",
+          "codeHash": "89e39eb54df8c3dd934735b7a6f829ac43597352eb755f1c45df289cee74f309",
+          "evidenceLines": [
+            31,
+            32,
+            37,
+            42,
+            43,
+            46,
+            51,
+            59
+          ],
+          "trialId": "pairwise-ungated-tabular-playground-series-dec-2021-34"
+        },
+        {
+          "policy": "fuse",
+          "title": "Train 200 rounds with shallow trees",
+          "description": "Fits 200 LightGBM boosting rounds on 80% of the training rows, with a depth limit of six and learning rate of 0.05.",
+          "steps": [
+            "Use 80% of training rows",
+            "Limit tree depth to six",
+            "Fit 200 boosting rounds"
+          ],
+          "codeHash": "542ed2d648e15c93184f41c63356e1e15a3bfffc761b43ac479f748bc17491bd",
+          "evidenceLines": [
+            49,
+            51,
+            62,
+            63,
+            64,
+            65,
+            75,
+            84
+          ],
+          "trialId": "fuse-ungated-tabular-playground-series-dec-2021-34"
+        }
+      ],
+      "seed": 34,
+      "setting": "ungated"
+    },
+    {
+      "task": "spooky-author-identification",
+      "label": "Author identification",
+      "kind": "Text",
+      "question": "Which writing patterns reveal the author?",
+      "description": "Given a passage, predict its author. The six programs differ in the patterns they extract, the classifier they fit, and how they combine predictions.",
+      "takeaway": "The differences go beyond model size: explicit writing-style features, Naive Bayes, model blending, and longer or word-boundary character patterns.",
+      "metric": "Test log loss",
+      "metricDirection": "lower",
+      "solutions": [
+        {
+          "policy": "base",
+          "title": "Add writing-style features",
+          "description": "Adds length, punctuation, capitalization, and vocabulary statistics to word and character patterns, then fits logistic regression.",
+          "steps": [
+            "Extract word and character patterns",
+            "Add writing-style statistics",
+            "Fit logistic regression"
+          ],
+          "codeHash": "726df512823088aab3871169e41d87f98d416ac97ef89f52d945b04401694c42",
+          "evidenceLines": [
+            159,
+            160,
+            188,
+            198,
+            219,
+            229,
+            231
+          ],
+          "trialId": "base-reference-spooky-author-identification-34"
+        },
+        {
+          "policy": "bon_metric_argmax",
+          "title": "Blend two text classifiers",
+          "description": "Trains logistic regression and Naive Bayes on word and character patterns. Chooses a geometric blend using validation loss.",
+          "steps": [
+            "Extract word and character patterns",
+            "Train logistic regression + Naive Bayes",
+            "Tune the geometric blend"
+          ],
+          "codeHash": "608b4d67eccaf219e9c45e42ab98001f4a0aed618f0c565b8eb5d8dc69e511db",
+          "evidenceLines": [
+            45,
+            56,
+            70,
+            80,
+            90,
+            158,
+            160
+          ],
+          "trialId": "bon_metric_argmax-ungated-spooky-author-identification-34"
+        },
+        {
+          "policy": "debug_pclean",
+          "title": "Tune a Naive Bayes classifier",
+          "description": "Uses word and character TF-IDF features, compares five smoothing strengths, and selects a Naive Bayes model by validation loss.",
+          "steps": [
+            "Extract word and character patterns",
+            "Compare five smoothing strengths",
+            "Fit the selected Naive Bayes model"
+          ],
+          "codeHash": "a383e04cf2727a83d401a7049ea6b075baa384fbca4ba86ecb9557e48d0dcc17",
+          "evidenceLines": [
+            59,
+            66,
+            81,
+            86,
+            87,
+            109,
+            115,
+            116
+          ],
+          "trialId": "debug_pclean-ungated-spooky-author-identification-34"
+        },
+        {
+          "policy": "seq",
+          "title": "Average regularization strengths",
+          "description": "Combines word and character patterns, then averages three logistic regressions with different regularization settings: C = 0.5, 1, and 5.",
+          "steps": [
+            "Combine word and character features",
+            "Train three regularization settings",
+            "Average author probabilities"
+          ],
+          "codeHash": "4c29a14de57c6854ef60a35d14bec057e19003c438813fb515a20cbea447bb4e",
+          "evidenceLines": [
+            49,
+            53,
+            71,
+            72,
+            73,
+            96
+          ],
+          "trialId": "seq-ungated-spooky-author-identification-34"
+        },
+        {
+          "policy": "pairwise",
+          "title": "Expand the pattern vocabulary",
+          "description": "Uses character patterns up to seven characters long and up to 200,000 features per word/character family, with class-balanced logistic regression.",
+          "steps": [
+            "Extract longer character patterns",
+            "Allow a wider feature vocabulary",
+            "Fit balanced logistic regression"
+          ],
+          "codeHash": "9cc9088788ded10c8277ec087736fcd7dbc03f5c10db227d507fd5bb5174937f",
+          "evidenceLines": [
+            38,
+            39,
+            50,
+            51,
+            63,
+            76,
+            77
+          ],
+          "trialId": "pairwise-ungated-spooky-author-identification-34"
+        },
+        {
+          "policy": "fuse",
+          "title": "Keep patterns within word boundaries",
+          "description": "Combines character patterns within word boundaries with word trigrams. Fits balanced logistic regression with C = 10 and averages three fits.",
+          "steps": [
+            "Extract patterns within words",
+            "Add word trigrams",
+            "Average logistic-regression fits"
+          ],
+          "note": "The repeated fits change the seed but use the same deterministic solver; no ensemble-diversity gain is implied.",
+          "codeHash": "3eff7de8956507930277fa2304145536ff726ce92364c4d7284b2bd5e4f419ea",
+          "evidenceLines": [
+            35,
+            38,
+            53,
+            79,
+            81,
+            88
+          ],
+          "trialId": "fuse-ungated-spooky-author-identification-34"
+        }
+      ],
+      "seed": 34,
+      "setting": "ungated"
+    }
+  ],
+  "selection": "Two tasks selected for different solution strategies and higher UCB than BoN percentiles in the displayed runs. Each includes Base AIDE and all five TTS policies with run seed 34. TTS runs are ungated; Base AIDE uses the historical reference. Percentiles belong to the individual saved programs, not seed averages. These selected examples do not establish an overall policy ranking."
+}
